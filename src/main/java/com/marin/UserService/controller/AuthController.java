@@ -1,6 +1,9 @@
 package com.marin.UserService.controller;
 
+import com.marin.UserService.dto.UserDataDTO;
 import com.marin.UserService.dto.UserRegistryDTO;
+import com.marin.UserService.entities.User;
+import com.marin.UserService.exception.NoUserFoundException;
 import com.marin.UserService.security.JwtUtil;
 import com.marin.UserService.service.CustomUserDetailsService;
 import com.marin.UserService.service.UserService;
@@ -68,13 +71,15 @@ public class AuthController {
             @ApiResponse(responseCode = "401" , description = "Bad credentials"),
             @ApiResponse(responseCode = "429" , description = "Too many login attempts")
     })
-    public ResponseEntity<String> login(@RequestBody UserRegistryDTO loginRequest) {
+    public ResponseEntity<String> login(@RequestBody UserRegistryDTO loginRequest) throws NoUserFoundException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.username(), loginRequest.password()));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.username());
 
-        String jwt = jwtUtil.generateToken(userDetails);
+        UserDataDTO user = userService.fetchUserByName(loginRequest.username());
+
+        String jwt = jwtUtil.generateToken(user , userDetails);
 
         return ResponseEntity.ok(jwt);
     }

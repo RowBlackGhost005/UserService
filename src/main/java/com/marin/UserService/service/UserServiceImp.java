@@ -41,7 +41,7 @@ public class UserServiceImp implements UserService {
         user.setUsername(userRegistry.username());
         user.setPassword(passwordEncoder.encode(userRegistry.password()));
 
-        Role userRole = roleRepository.findByName("User").orElseThrow();
+        Role userRole = roleRepository.findByName("Client").orElseThrow();
 
         user.getRoles().add(userRole);
 
