@@ -1,5 +1,7 @@
 package com.marin.UserService.security;
 
+import com.marin.UserService.dto.UserDataDTO;
+import com.marin.UserService.entities.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,7 +9,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.marin.UserService.entities.User;
+
 import javax.crypto.SecretKey;
+import java.awt.*;
 import java.util.Date;
 
 /**
@@ -40,12 +45,13 @@ public class JwtUtil {
      * The JWT tokens contains the signed claim subject for the username of the user to authenticate.
      * This token also contains the roles of the authenticated user.
      *
-     * @param userDetails User details to be used to generate this token.
+     * @param user User to be used to generate the token.
      * @return Signed JWT token.
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDataDTO user , UserDetails userDetails) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(user.username())
+                .claim("id" , user.id())
                 .claim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + ONE_DAY_MILIS))
