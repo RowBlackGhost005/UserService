@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Endpoint for authentication of clients
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;

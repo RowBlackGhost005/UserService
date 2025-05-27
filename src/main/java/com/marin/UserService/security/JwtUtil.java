@@ -1,7 +1,7 @@
 package com.marin.UserService.security;
 
 import com.marin.UserService.dto.UserDataDTO;
-import com.marin.UserService.entities.Role;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.marin.UserService.entities.User;
-
 import javax.crypto.SecretKey;
-import java.awt.*;
 import java.util.Date;
 
 /**
@@ -73,6 +70,23 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    /**
+     * Extracts the user id of the user used to create the token given as parameter.
+     * This UserID should be used to log any interactions this token bearer does with the API
+     *
+     * @param token Token to extract the User id.
+     * @return User id
+     */
+    public int extractUserId(String token){
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("id" , Integer.class);
     }
 
     /**
